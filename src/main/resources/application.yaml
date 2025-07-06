@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: scheduler-project
+
+logging:
+  level:
+    com.example.schedulertest: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: scheduledtasks,health

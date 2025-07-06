@@ -2,10 +2,8 @@ package com.scheduler.schedulerproject.scheduler;
 
 import com.scheduler.schedulerproject.service.SchedulerService;
 import jakarta.annotation.PostConstruct;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.tinylog.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +16,6 @@ import java.time.format.DateTimeFormatter;
  */
 @Component
 public class MyScheduler {
-    private static final Logger log = LoggerFactory.getLogger(MyScheduler.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
     @Autowired
@@ -29,15 +26,15 @@ public class MyScheduler {
     @PostConstruct
     public void init() {
         startTime = LocalDateTime.now();
-        log.info("🚀 [테스트 시작] 시간: {}", startTime.format(formatter));
-        log.info("📋 [테스트 조건] 단일 스레드, 각 작업 1초/2초/3초, 총 10초간 테스트");
+        Logger.info("🚀 [테스트 시작] 시간: {}", startTime.format(formatter));
+        Logger.info("📋 [테스트 조건] 단일 스레드, 각 작업 1초/2초/3초, 총 10초간 테스트");
 
         // 10초 후 요약 출력
         new Thread(() -> {
             try {
                 Thread.sleep(10000);
                 schedulerService.printSummary();
-                log.info("🏁 [테스트 종료] 시간: {}", LocalDateTime.now().format(formatter));
+                Logger.info("🏁 [테스트 종료] 시간: {}", LocalDateTime.now().format(formatter));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
