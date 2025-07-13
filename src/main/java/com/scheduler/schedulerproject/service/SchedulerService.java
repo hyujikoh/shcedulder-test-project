@@ -18,6 +18,8 @@ public class SchedulerService {
     private final AtomicInteger scheduler1Count = new AtomicInteger(0);
     private final AtomicInteger scheduler2Count = new AtomicInteger(0);
     private final AtomicInteger scheduler3Count = new AtomicInteger(0);
+    private final AtomicInteger scheduler4Count = new AtomicInteger(0);
+
 
     public void executeTask1() {
         int count = scheduler1Count.incrementAndGet();
@@ -74,6 +76,26 @@ public class SchedulerService {
 
         String endTime = LocalDateTime.now().format(formatter);
         Logger.info("🟡 [TASK-3] 완료 - 실행횟수: {}, 시간: {}, 스레드: {}", count, endTime, threadName);
+    }
+
+    // 30 초 동안 스레드를 잡아먹는 작업
+    public void executeTask4() {
+        int count = scheduler4Count.incrementAndGet();
+        String startTime = LocalDateTime.now().format(formatter);
+        String threadName = Thread.currentThread().getName();
+
+        Logger.info("🟣 [TASK-4] 시작 - 실행횟수: {}, 시간: {}, 스레드: {}", count, startTime, threadName);
+
+        try {
+            // 30초 작업 시뮬레이션
+            Thread.sleep(30000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            Logger.error(e, "Task4 interrupted");
+        }
+
+        String endTime = LocalDateTime.now().format(formatter);
+        Logger.info("🟣 [TASK-4] 완료 - 실행횟수: {}, 시간: {}, 스레드: {}", count, endTime, threadName);
     }
 
     public void printSummary() {

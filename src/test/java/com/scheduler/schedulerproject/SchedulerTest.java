@@ -2,6 +2,7 @@ package com.scheduler.schedulerproject;
 
 import com.scheduler.schedulerproject.scheduler.MyScheduler;
 import com.scheduler.schedulerproject.service.SchedulerService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.time.Duration;
 
 import static org.awaitility.Awaitility.await;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * @author hyunjikoh
@@ -36,6 +36,7 @@ public class SchedulerTest {
     private ApplicationContext applicationContext;
 
     @Test
+    @DisplayName("단일 스레드 기준 스케줄러가 정상적으로 실행되는지 검증")
     void testScheduledTasks() {
         // 실제 서비스를 스파이로 감싸기
         SchedulerService spyService = Mockito.spy(schedulerService);
@@ -59,6 +60,42 @@ public class SchedulerTest {
 
                         // Task3는 3초마다 실행되므로 최소 1회 이상 실행되어야 함
                         verify(spyService, atLeast(1)).executeTask3();
+                    });
+        } finally {
+            // 테스트 후 원래 서비스로 복원
+            ReflectionTestUtils.setField(applicationContext.getBean(MyScheduler.class),
+                    "schedulerService", originalService);
+        }
+    }
+
+    @Test
+    @DisplayName("30초 작업이 10초 동안 실행되지 않는지 검증 또한 이로인해 다른 태스크들이 실행되지 않는지 검증")
+    void testScheduledTasksWith30sTask(){
+        // 실제 서비스를 스파이로 감싸기
+        SchedulerService spyService = Mockito.spy(schedulerService);
+
+        // 원본 참조 저장
+        SchedulerService originalService = schedulerService;
+
+        try {
+            // 테스트를 위해 스파이 서비스로 교체
+            ReflectionTestUtils.setField(applicationContext.getBean(MyScheduler.class),
+                    "schedulerService", spyService);
+
+            // 10초 동안 스케줄러가 실행되는지 검증
+            await().atMost(Duration.ofSeconds(11))
+                    .untilAsserted(() -> {
+                        // Task1은 0.1초마다 실행되므로 최소 1회 이상 실행되어야 함
+                        verify(spyService, never()).executeTask4();
+
+                        // Task2는 2초마다 실행되므로 최소 1회 이상 실행되어야 함
+                        verify(spyService, never()).executeTask2();
+
+                        // Task3는 3초마다 실행되므로 최소 1회 이상 실행되어야 함
+                        verify(spyService, never()).executeTask3();
+
+                        // Task1는 1초마다 실행되므로 최소 1회 이상 실행되어야 함
+                        verify(spyService, never()).executeTask1();
                     });
         } finally {
             // 테스트 후 원래 서비스로 복원

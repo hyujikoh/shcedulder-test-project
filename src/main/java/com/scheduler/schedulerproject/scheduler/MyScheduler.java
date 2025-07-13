@@ -41,6 +41,14 @@ public class MyScheduler {
         }).start();
     }
 
+    // 매 0.1초마다 실행 (30초 작업)
+    @Scheduled(fixedRate = 100)
+    public void scheduler4() {
+        if (isTestPeriod()) {
+            schedulerService.executeTask4();
+        }
+    }
+
     // 매 1초마다 실행 (1초 작업)
     @Scheduled(fixedRate = 1000)
     public void scheduler1() {
