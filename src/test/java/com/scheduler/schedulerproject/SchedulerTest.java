@@ -51,13 +51,13 @@ public class SchedulerTest {
             // 10초 동안 스케줄러가 실행되는지 검증
             await().atMost(Duration.ofSeconds(11))
                     .untilAsserted(() -> {
-                        // Task1은 1초마다 실행되므로 최소 8회 이상 실행되어야 함
+                        // Task1은 1초마다 실행되므로 최소 2회 이상 실행되어야 함
                         verify(spyService, atLeast(2)).executeTask1();
 
-                        // Task2는 2초마다 실행되므로 최소 4회 이상 실행되어야 함
+                        // Task2는 2초마다 실행되므로 최소 1회 이상 실행되어야 함
                         verify(spyService, atLeast(1)).executeTask2();
 
-                        // Task3는 3초마다 실행되므로 최소 3회 이상 실행되어야 함
+                        // Task3는 3초마다 실행되므로 최소 1회 이상 실행되어야 함
                         verify(spyService, atLeast(1)).executeTask3();
                     });
         } finally {
