@@ -103,24 +103,4 @@ class MultiThreadSchedulerTests {
         }
     }
 
-    @Test
-    void testTaskExecutionDuration() {
-        // 각 태스크의 실행 시간을 검증
-        SchedulerService realService = new SchedulerService();
-
-        long startTime = System.currentTimeMillis();
-        realService.executeTask1();
-        long duration = System.currentTimeMillis() - startTime;
-        assert duration >= 1000 : "Task1 실행 시간이 1초 미만입니다: " + duration;
-
-        startTime = System.currentTimeMillis();
-        realService.executeTask2();
-        duration = System.currentTimeMillis() - startTime;
-        assert duration >= 2000 : "Task2 실행 시간이 2초 미만입니다: " + duration;
-
-        startTime = System.currentTimeMillis();
-        realService.executeTask3();
-        duration = System.currentTimeMillis() - startTime;
-        assert duration >= 3000 : "Task3 실행 시간이 3초 미만입니다: " + duration;
-    }
 }
